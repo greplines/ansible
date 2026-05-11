@@ -1,0 +1,65 @@
+[server]
+hostname = "{{ hostname_s }}"
+server_role = "{{ server-role }}"
+
+[user_store]
+type = "database_unique_id"
+
+[super_admin]
+username = "{{ admin_username }}"
+password = "{% if secure_vault_enabled|bool %}$secret{admin_password}{% else %}{{ admin_password }}{% endif %}"
+create_admin_account = true
+
+[database.shared_db]
+type = "{{ shared_db_type }}"
+url = "{{ shared_db_url }}"
+hostname = "{{ hostname_shared_db }}"
+port = "{{ port_shared_db }}"
+name = "{{ name_shared_db }}"
+username = "{% if secure_vault_enabled|bool %}$secret{shared_db_username}{% else %}{{ shared_db_username }}{% endif %}"
+password = "{% if secure_vault_enabled|bool %}$secret{shared_db_password}{% else %}{{ shared_db_password }}{% endif %}"
+driver = "{{ driver }}"
+validationQuery = "SELECT 1"
+
+[keystore.tls]
+file_name =  "{{ tls_key_store_name }}"
+type =  "JKS"
+password =  "{% if secure_vault_enabled|bool %}$secret{tls_key_store_password}{% else %}{{ tls_key_store_password }}{% endif %}"
+alias =  "{{ tls_key_store_key_alias }}"
+key_password =  "{% if secure_vault_enabled|bool %}$secret{tls_key_store_key_password}{% else %}{{ tls_key_store_key_password }}{% endif %}"
+
+[truststore]
+file_name = "{{ trust_store_name }}"
+type = "JKS"
+password = "{% if secure_vault_enabled|bool %}$secret{trust_store_password}{% else %}{{ trust_store_password }}{% endif %}"
+
+[apim.key_manager]
+service_url = "{{ key_manager_server_url }}"
+
+[apim.sync_runtime_artifacts.gateway]
+gateway_labels = [{% for label in gateway_labels %}"{{ label }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+
+[apim.event_hub]
+enable = "{{ event_hub_enable }}"
+username = "{{ event_hub_username }}"
+event_listening_endpoints = [{% for endpoint in event_listening_endpoints %}"{{ endpoint }}"{% if not loop.last %},{% endif %}{% endfor %}]
+
+[apim.throttling]
+throttle_decision_endpoints = [{% for endpoint in throttle_decision_endpoints %}"{{ endpoint }}"{% if not loop.last %}, {% endif %}{% endfor %}]
+
+
+{% for server in throttle_url_groups %}
+[[apim.throttling.url_group]]
+traffic_manager_urls = ["tcp://{{ server.hostname }}:9611"]
+traffic_manager_auth_urls = ["ssl://{{ server.hostname }}:9711"]
+{% endfor %}
+
+{% if secure_vault_enabled|bool %}
+[secrets]
+admin_password = "[{{ admin_password }}]"
+shared_db_username = "[{{ shared_db_username }}]"
+shared_db_password = "[{{ shared_db_password }}]"
+trust_store_password = "[{{ trust_store_password }}]"
+tls_key_store_key_password = "[{{ tls_key_store_key_password }}]"
+tls_key_store_password = "[{{ tls_key_store_password }}]"
+{% endif %}

@@ -1,0 +1,15 @@
+[all]
+app-cpcab-ta01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+app-cpcab-tb01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+app-gwcab-ta01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+app-gwcab-tb01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+
+
+[apim]
+app-cpcab-ta01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+app-cpcab-tb01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+
+[apim-gateway]
+app-gwcab-ta01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+app-gwcab-tb01.test.coelsaprod.local ansible_user=aperera.factory ansible_ssh_port=2222
+
